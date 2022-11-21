@@ -12,34 +12,42 @@ import com.tiago.appeventos.repository.EventoRepository;
 
 @Controller
 public class EventoController {
-    
+
     @Autowired
     private EventoRepository eventorepository;
 
-    @RequestMapping(value="/cadastrarEvento", method=RequestMethod.GET)
-    public String formulario(){
+    @RequestMapping(value = "/cadastrarEvento", method = RequestMethod.GET)
+    public String formulario() {
         return "evento/formularioEvento";
     }
 
-    @RequestMapping(value="/cadastrarEvento", method=RequestMethod.POST)
-    public String formulario(Evento evento){
-        
+    @RequestMapping(value = "/cadastrarEvento", method = RequestMethod.POST)
+    public String formulario(Evento evento) {
+
         eventorepository.save(evento);
         return "redirect:/cadastrarEvento";
     }
 
     @RequestMapping("/eventos")
-    public ModelAndView listaEventos(){
+    public ModelAndView listaEventos() {
         ModelAndView mv = new ModelAndView("index");
         Iterable<Evento> eventos = eventorepository.findAll();
-        mv.addObject("eventos", eventos); 
+        mv.addObject("eventos", eventos);
         return mv;
     }
-    @RequestMapping("/{codigo}")
-    public ModelAndView detalhesDoEvento(@PathVariable("codigo") long codigo){
+    @RequestMapping("/deletar")
+    public String deletarEvento(long codigo){
+        Evento evento = eventorepository.findByCodigo(codigo);
+        eventorepository.delete(evento);
+        return "redirect:/eventos";
+    }
+
+    @RequestMapping(value = "/{codigo}", method = RequestMethod.GET)
+    public ModelAndView detalhesDoEvento(@PathVariable("codigo") long codigo) {
         Evento evento = eventorepository.findByCodigo(codigo);
         ModelAndView mv = new ModelAndView("evento/detalhesDoEvento");
         mv.addObject("evento", evento);
         return mv;
     }
+   
 }
